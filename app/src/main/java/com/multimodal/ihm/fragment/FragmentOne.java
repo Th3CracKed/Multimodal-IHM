@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.multimodal.ihm.R;
 
+
 /**
  * A simple {@link Fragment} subclass.
  */

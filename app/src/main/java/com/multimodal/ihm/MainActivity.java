@@ -1,14 +1,15 @@
 package com.multimodal.ihm;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.multimodal.ihm.adapter.ViewPagerAdapter;
 import com.multimodal.ihm.fragment.FragmentOne;
 import com.multimodal.ihm.fragment.FragmentThree;
 import com.multimodal.ihm.fragment.FragmentTwo;
+
 
 public class MainActivity extends AppCompatActivity {
 

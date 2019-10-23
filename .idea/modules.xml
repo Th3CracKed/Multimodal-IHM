@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Multimodal-ihm.iml" filepath="$PROJECT_DIR$/Multimodal-ihm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TabLayout.iml" filepath="$PROJECT_DIR$/TabLayout.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/tab-layout-fragment-master.iml" filepath="$PROJECT_DIR$/tab-layout-fragment-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
