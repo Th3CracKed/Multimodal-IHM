@@ -1,39 +1,35 @@
 package com.multimodal.ihm;
 
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabLayout;
-
-import androidx.viewpager.widget.ViewPager;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-
-import com.multimodal.ihm.ui.main.SectionsPagerAdapter;
+import com.multimodal.ihm.adapter.ViewPagerAdapter;
+import com.multimodal.ihm.fragment.FragmentOne;
+import com.multimodal.ihm.fragment.FragmentThree;
+import com.multimodal.ihm.fragment.FragmentTwo;
 
 public class MainActivity extends AppCompatActivity {
+
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.tabs);
-        tabs.setupWithViewPager(viewPager);
-        FloatingActionButton fab = findViewById(R.id.fab);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        viewPager = findViewById(R.id.viewPager);
+
+        addTabs(viewPager);
+        ((TabLayout) findViewById(R.id.tabLayout)).setupWithViewPager( viewPager );
+    }
+
+    private void addTabs(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFrag(new FragmentOne(), "ONE");
+        adapter.addFrag(new FragmentTwo(), "TWO");
+        adapter.addFrag(new FragmentThree(), "THREE");
+        viewPager.setAdapter(adapter);
     }
 }
