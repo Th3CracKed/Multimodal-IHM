@@ -42,7 +42,7 @@ public class FragmentOne extends Fragment  {
         listView=(ListView) view.findViewById(R.id.list);
         dataModels= new ArrayList<>();
 
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info", "Jean", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
         dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
         dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
         dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
