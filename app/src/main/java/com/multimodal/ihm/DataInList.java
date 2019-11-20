@@ -1,13 +1,11 @@
 package com.multimodal.ihm;
 
-import android.media.Image;
-
 public class DataInList {
 
-    String photo;
-    String firstName;
-    String lastName;
-    String number;
+    private String photo;
+    private String firstName;
+    private String lastName;
+    private String number;
 
     public DataInList(String photo, String firstName, String lastName, String number) {
         this.photo = photo;

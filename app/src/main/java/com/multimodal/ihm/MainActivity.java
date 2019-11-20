@@ -32,5 +32,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFrag(new FragmentTwo(), "TWO");
         adapter.addFrag(new FragmentThree(), "THREE");
         viewPager.setAdapter(adapter);
+        viewPager.setOffscreenPageLimit(3);
     }
 }

@@ -1,16 +1,13 @@
 package com.multimodal.ihm.fragment;
 
 
-import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toolbar;
 
 import com.multimodal.ihm.DataInList;
 import com.multimodal.ihm.R;
@@ -61,15 +58,12 @@ public class FragmentOne extends Fragment  {
 
         adapter= new ListAdapter(dataModels,view.getContext());
         listView.setAdapter(adapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
 
-                DataInList dataModel= dataModels.get(position);
+            DataInList dataModel= dataModels.get(position);
 
-                Snackbar.make(view, dataModel.getFirstName()+ " " + dataModel.getLastName() + "\n" +dataModel.getNumber(), Snackbar.LENGTH_LONG)
-                        .setAction("No action", null).show();
-            }
+            Snackbar.make(view1, dataModel.getFirstName()+ " " + dataModel.getLastName() + "\n" +dataModel.getNumber(), Snackbar.LENGTH_LONG)
+                    .setAction("No action", null).show();
         });
 
         return listView;
