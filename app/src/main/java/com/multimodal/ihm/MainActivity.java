@@ -11,7 +11,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_DOWN:
+                vibrate();
           //      if(activateCursorInteraction){
                 int position = viewPager.getCurrentItem();
                 Fragment fragment =  viewPagerAdapter.getRegisteredFragment(position);
@@ -154,6 +158,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 break;
         }
         return true;
+    }
+
+    private void vibrate() {
+        Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (vibrator != null) {
+                vibrator.vibrate(VibrationEffect.createOneShot(50, VibrationEffect.DEFAULT_AMPLITUDE));
+            }
+        } else {
+            //deprecated in API 26
+            if (vibrator != null) {
+                vibrator.vibrate(50);
+            }
+        }
     }
 
     private void searchInListView(FragmentOne fragment, float x, float y){
