@@ -14,6 +14,7 @@ import com.multimodal.ihm.R;
 import com.multimodal.ihm.adapter.ListAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -23,7 +24,6 @@ public class FragmentOne extends Fragment  {
 
     ArrayList<DataInList> dataModels;
     ListView listView;
-    private static ListAdapter adapter;
 
     public FragmentOne() {
         // Required empty public constructor
@@ -36,27 +36,19 @@ public class FragmentOne extends Fragment  {
         // Inflate the layout for this fragment
         super.onCreate(savedInstanceState);
         View view =  inflater.inflate(R.layout.fragment_one, container, false);
-        listView=(ListView) view.findViewById(R.id.list);
-        dataModels= new ArrayList<>();
+        listView = view.findViewById(R.id.list);
+        dataModels = new ArrayList<>();
 
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Abdel", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Faris", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Lucie", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Marianne", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Yara", "Dupont", "06 06 06 06 06"));
         dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
-        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean 1", "Dupont", "06 06 06 06 06"));
+        dataModels.add(new DataInList("@android:drawable/ic_dialog_info" , "Jean 2", "Dupont", "06 06 06 06 06"));
 
-
-        adapter= new ListAdapter(dataModels,view.getContext());
+        ListAdapter adapter = new ListAdapter(dataModels, view.getContext());
         listView.setAdapter(adapter);
         listView.setOnItemClickListener((parent, view1, position, id) -> {
 
@@ -66,6 +58,11 @@ public class FragmentOne extends Fragment  {
                     .setAction("No action", null).show();
         });
 
+        return listView;
+    }
+
+
+    public ListView getListView(){
         return listView;
     }
 

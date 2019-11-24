@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.multimodal.ihm.adapter.ViewPagerAdapter;
@@ -42,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private float xPos, yPos;
+    private int yCalibrate = 100;
     private float xAccel, yAccel;
     private float xMax, yMax;
     private SensorManager sensorManager;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private  ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout tabLayout;
+    private FragmentOne fragment1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,10 +76,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         setupViewPager();
     }
 
+    private void setupCursor() {
+        FrameLayout frameLayout = findViewById(R.id.layout_main);
+        BallView ballView = new BallView(this);
+        frameLayout.addView(ballView);
+    }
+
     private void setupViewPager() {
         viewPager = findViewById(R.id.viewPager);
         viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        viewPagerAdapter.addFrag(new FragmentOne(), "ONE");
+        fragment1 = new FragmentOne();
+        viewPagerAdapter.addFrag(fragment1, "ONE");
         viewPagerAdapter.addFrag(new FragmentTwo(), "TWO");
         viewPagerAdapter.addFrag(new FragmentThree(), "THREE");
         viewPager.setAdapter(viewPagerAdapter);
@@ -128,8 +138,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_DOWN:
           //      if(activateCursorInteraction){
-                    onVolumeDownClicked(tabLayout,getCurrentFragment(), xPos, yPos);
-            //    }
+                int position = viewPager.getCurrentItem();
+                Fragment fragment =  viewPagerAdapter.getRegisteredFragment(position);
+                boolean found = treeSearching(tabLayout, fragment, xPos, yPos);
+                if(position == 0 && ! found) {
+                    if(fragment1 != null){
+                         searchInListView(fragment1, xPos, yPos);
+                    }
+                }
+
+                //    }
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 Log.e("main","keyUp");
@@ -138,31 +156,39 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return true;
     }
 
-    private Fragment getCurrentFragment() {
-        int position = viewPager.getCurrentItem();
-        return viewPagerAdapter.getRegisteredFragment(position);
+    private void searchInListView(FragmentOne fragment, float x, float y){
+        ListView listView = fragment.getListView();
+        if (listView != null) {
+            for(int pos = 0; pos < listView.getCount(); pos++){
+                View item = listView.getChildAt(pos);
+                if(item != null) {
+                    Log.e("Main", "" + item.getBottom());
+                    Rect bounds = new Rect();
+                    listView.getChildAt(pos).getHitRect(bounds);
+                    if( bounds.contains((int) x,(int) y - yCalibrate)){
+                        listView.performItemClick(fragment.getView(),
+                                pos,
+                                listView.getAdapter().getItemId(pos));
+                        break;
+                    }
+                }
+            }
+        }
     }
 
-    private void onVolumeDownClicked(TabLayout tabLayoutView, Fragment fragmentView, float x, float y) {
+    private boolean treeSearching(TabLayout tabLayoutView, Fragment fragment, float x, float y) {
         searchElementInTabLayoutToSwitchPage(tabLayoutView, x, y);
-        futureView = executorService.submit(() -> searchForElementToClick(fragmentView.getView(), x,y));
-        tryGetViewThenClick();
-    }
-
-    private void tryGetViewThenClick() {
+        futureView = executorService.submit(() -> searchForElementToClick(fragment.getView(), x,y));
         try {
             View viewToClick = futureView.get();
             if(viewToClick != null) {
                 simulatesClick(viewToClick);
+                return true;
             }
+            return false;
         } catch (ExecutionException | InterruptedException ignored) {
+            return false;
         }
-    }
-
-    private void setupCursor(){
-        FrameLayout frameLayout = findViewById(R.id.layout_main);
-        BallView ballView = new BallView(this);
-        frameLayout.addView(ballView);
     }
 
     private void simulatesClick(final View viewToClick) {
@@ -177,20 +203,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             viewToClick.invalidate();
             //any other associated action
         }, 300);  // .3secs delay time
-    }
-
-    private View searchForElementToClick(View view, float x, float y) {
-        ArrayList<View> allViews = getAllClickableView((ViewGroup) view);
-        for(int i = 0; i < allViews.size();  i++)
-        {
-            View child = allViews.get(i);
-            Rect bounds = new Rect();
-            child.getHitRect(bounds);
-            if( bounds.contains((int) x,(int) y)){
-                return child;
-            }
-        }
-        return null;
     }
 
     private void searchElementInTabLayoutToSwitchPage(View view, float x, float y) {
@@ -209,16 +221,30 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    private ArrayList<View> getAllClickableView(ViewGroup v) {
-        ArrayList<View> clickableViews = new ArrayList<>();
-        for (int i = 0; i < v.getChildCount(); i++) {
-            View child = v.getChildAt(i);
-            if(child instanceof ViewGroup) {
-                clickableViews.addAll(getAllClickableView((ViewGroup) child));
-            }else if(child instanceof TextView || child instanceof ImageView ) { // TODO support all clickable view
-                clickableViews.add(child);
+    private View searchForElementToClick(View view, float x, float y) {
+        ArrayList<View> allViews = getAllClickableView((ViewGroup) view);
+        for(int i = 0; i < allViews.size();  i++)
+        {
+            View child = allViews.get(i);
+            Rect bounds = new Rect();
+            child.getHitRect(bounds);
+            if( bounds.contains((int) x,(int) y - yCalibrate)){
+                return child;
             }
         }
+        return null;
+    }
+
+    private ArrayList<View> getAllClickableView(ViewGroup v) {
+        ArrayList<View> clickableViews = new ArrayList<>();
+            for (int i = 0; i < v.getChildCount(); i++) {
+                View child = v.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    clickableViews.addAll(getAllClickableView((ViewGroup) child));
+                } else if (child instanceof TextView || child instanceof ImageView) { // TODO support all clickable view
+                    clickableViews.add(child);
+                }
+            }
         return clickableViews;
     }
 
