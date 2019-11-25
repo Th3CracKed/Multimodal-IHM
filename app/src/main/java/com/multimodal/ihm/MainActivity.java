@@ -23,7 +23,6 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -46,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private float xPos, yPos;
-    private float xPosOnVolumeUpClicked;
+    private float xPosOnVolumeUpClicked, yPosOnVolumeUpClicked;
     private boolean isReleased = true;
     private int yCalibrate = 100;
     private float xAccel, yAccel;
@@ -142,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if(isReleased) {
                     xPosOnVolumeUpClicked = xPos;
+                    yPosOnVolumeUpClicked = yPos;
                     isReleased = false;
                 }
                 break;
@@ -154,22 +154,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
             isReleased = true;
             Log.e("main", "keyUp");
-            float scrolling = xPos - xPosOnVolumeUpClicked ;
-            if( scrolling > 80){
-                scrollRight();
-            }else if(scrolling < -80){
-                scrollLeft();
+            float scrollingX = xPos - xPosOnVolumeUpClicked ;
+            float scrollingY = yPos - yPosOnVolumeUpClicked;
+            boolean shouldSlide = Math.abs(scrollingX) > Math.abs(scrollingY);
+            if(shouldSlide) {
+                if (scrollingX > 80) {
+                    slideRight();
+                } else if (scrollingX < -80) {
+                    slideLeft();
+                }
+            }else{
+                int nbOfItemsToScroll = Math.abs((int)(scrollingY / 100)) + 1;
+                if (scrollingY > 80) {
+                    scrollDown(nbOfItemsToScroll);
+                } else if (scrollingY < -80) {
+                    scrollUp(nbOfItemsToScroll);
+                }
             }
         }
         return true;
     }
 
-    private void scrollRight() {
+    private void scrollUp(int nbOfItemsToScroll) {
+        ListView listView = fragment1.getListView();
+        int currentPosition = listView.getFirstVisiblePosition();
+        listView.smoothScrollToPosition(currentPosition - nbOfItemsToScroll);
+    }
+
+    private void scrollDown(int nbOfItemsToScroll) {
+        ListView listView = fragment1.getListView();
+        int currentPosition = listView.getLastVisiblePosition();
+        listView.smoothScrollToPosition(currentPosition + nbOfItemsToScroll);
+    }
+
+    private void slideRight() {
         int currentItem = viewPager.getCurrentItem();
         viewPager.setCurrentItem(currentItem+1);
     }
 
-    private void scrollLeft() {
+    private void slideLeft() {
         int currentItem = viewPager.getCurrentItem();
         viewPager.setCurrentItem(currentItem-1);
     }
