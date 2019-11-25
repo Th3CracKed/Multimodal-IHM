@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         xMax = (float) size.x - 100;
         yMax = (float) size.y - calculateActionBarHeight() * 2;
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        setupCursor();
         setupViewPager();
     }
 
@@ -115,12 +114,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     public boolean onTouchEvent(final MotionEvent event)
     {
-        /*if(event.getPointerCount() > 2) {
+        if(event.getPointerCount() > 2) {
             activateCursorInteraction = true;
         }
         if(activateCursorInteraction){
             setupCursor();
-        }*/
+        }
         return true;
     }
 
@@ -141,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 vibrate();
-          //      if(activateCursorInteraction){
+               if(activateCursorInteraction){
                 int position = viewPager.getCurrentItem();
                 Fragment fragment =  viewPagerAdapter.getRegisteredFragment(position);
                 boolean found = treeSearching(tabLayout, fragment, xPos, yPos);
@@ -151,7 +150,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     }
                 }
 
-                //    }
+                    }
+                break;
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                Log.e("main","keyUp");
+                break;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode){
+            case KeyEvent.KEYCODE_VOLUME_DOWN:
+
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 Log.e("main","keyUp");
