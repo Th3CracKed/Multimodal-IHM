@@ -1,6 +1,7 @@
 package com.multimodal.ihm.fragment;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.widget.TextView;
 
 import com.multimodal.ihm.R;
 
+import java.util.ArrayList;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -19,240 +22,63 @@ import com.multimodal.ihm.R;
 public class FragmentTwo extends Fragment {
 
     private TextView passwordText;
-    Button button1;
-    Button button2;
-    Button button3;
-    Button button4;
-    Button button5;
-    Button button6;
-    Button button7;
-    Button button8;
-    Button button9;
-    Button button0;
-    Button buttonDEL;
-    String text = "";
-    int i = 0;
+    private String text = "";
+    private int charactersCount = 0;
 
     public FragmentTwo() {
         // Required empty public constructor
 
     }
 
-    public String addEtoiles(int cpt){
-        String s = "";
+    public String addStars(int cpt){
+        StringBuilder s = new StringBuilder();
         for(int i = 1; i <= cpt; i++){
-            s = s + "*";
+            s.append("*");
         }
 
-        return s;
+        return s.toString();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_two, container, false);
-        passwordText = (TextView) view.findViewById(R.id.textPassword);
-        button1 = view.findViewById(R.id.button1);
-        button2 = view.findViewById(R.id.button2);
-        button3 = view.findViewById(R.id.button3);
-        button4 = view.findViewById(R.id.button4);
-        button5 = view.findViewById(R.id.button5);
-        button6 = view.findViewById(R.id.button6);
-        button7 = view.findViewById(R.id.button7);
-        button8 = view.findViewById(R.id.button8);
-        button9 = view.findViewById(R.id.button9);
-        button0 = view.findViewById(R.id.button0);
-        buttonDEL = view.findViewById(R.id.buttonDEL);
+        passwordText = view.findViewById(R.id.textPassword);
+        ArrayList <Button> buttons = new ArrayList<>();
+        buttons.add(view.findViewById(R.id.button0));
+        buttons.add(view.findViewById(R.id.button1));
+        buttons.add(view.findViewById(R.id.button2));
+        buttons.add(view.findViewById(R.id.button3));
+        buttons.add(view.findViewById(R.id.button4));
+        buttons.add(view.findViewById(R.id.button5));
+        buttons.add(view.findViewById(R.id.button6));
+        buttons.add(view.findViewById(R.id.button7));
+        buttons.add(view.findViewById(R.id.button8));
+        buttons.add(view.findViewById(R.id.button9));
+        Button buttonDel = view.findViewById(R.id.buttonDEL);
+        buttonDel.setOnClickListener( view1 -> {
+            if (charactersCount >0) {
+                charactersCount = charactersCount - 1;
+                text = addStars(charactersCount);
+                passwordText.setText(text);
+            }
+        });
         // Inflate the layout for this fragment
-
-        button1.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if(i<4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "1");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
+        for(int i = 0; i< buttons.size(); i++){
+            int finalI = i;
+            buttons.get(i).setOnClickListener(view1 -> {
+                if(charactersCount < 4) {
+                    text = addStars(charactersCount);
+                    passwordText.setText(text + finalI);
+                    charactersCount = charactersCount + 1;
+                    new Handler().postDelayed(() -> {
+                        text = addStars(charactersCount);
+                        passwordText.setText(text);
                     }, 300);
                 }
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "2");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "3");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button4.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "4");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button5.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "5");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button6.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "6");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button7.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "7");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button8.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "8");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button9.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "9");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        button0.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i < 4) {
-                    text = addEtoiles(i);
-                    passwordText.setText(text + "0");
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            i = i + 1;
-                            text = addEtoiles(i);
-                            passwordText.setText(text);
-                        }
-                    }, 300);
-
-                }
-            }
-        });
-
-        buttonDEL.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (i>0) {
-                    i = i - 1;
-                    text = addEtoiles(i);
-                    passwordText.setText(text);
-                }
-            }
-        });
+            });
+        }
 
         return view;
     }
