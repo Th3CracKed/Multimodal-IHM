@@ -214,15 +214,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private void searchInListView(FragmentOne fragment, float x, float y){
         ListView listView = fragment.getListView();
         if (listView != null) {
-            for(int pos = 0; pos < listView.getCount(); pos++){
+            int totalVisibleElement = listView.getLastVisiblePosition() - listView.getFirstVisiblePosition();
+            for(int pos = 0; pos <= totalVisibleElement; pos++){
                 View item = listView.getChildAt(pos);
                 if(item != null) {
-                    Log.e("Main", "" + item.getBottom());
                     Rect bounds = new Rect();
-                    listView.getChildAt(pos).getHitRect(bounds);
+                    item.getHitRect(bounds);
                     if( bounds.contains((int) x,(int) y - yCalibrate)){
                         listView.performItemClick(fragment.getView(),
-                                pos,
+                                pos + listView.getFirstVisiblePosition(),
                                 listView.getAdapter().getItemId(pos));
                         break;
                     }
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 View child = v.getChildAt(i);
                 if (child instanceof ViewGroup) {
                     clickableViews.addAll(getAllClickableView((ViewGroup) child));
-                } else if (child instanceof TextView || child instanceof ImageView) { // TODO support all clickable view
+                } else if (child instanceof TextView || child instanceof ImageView) {
                     clickableViews.add(child);
                 }
             }
@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } else if (sensorEvent.values[1] - xAccel > -6 && sensorEvent.values[1] - xAccel < 6) {
             return 2f;
         } else {
-            return 6f; // si il y a une grande orientation => multiplier l'effet par 6 // TODO maybe it's too much?
+            return 6f; // si il y a une grande orientation => multiplier l'effet par 6 //
         }
     }
 
