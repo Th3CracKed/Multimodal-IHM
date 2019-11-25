@@ -46,6 +46,8 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private float xPos, yPos;
+    private float xPosOnVolumeUpClicked;
+    private boolean isReleased = true;
     private int yCalibrate = 100;
     private float xAccel, yAccel;
     private float xMax, yMax;
@@ -55,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float standingCalibration = 0;
     private int calibrationCount = 0;
     private boolean isCalibrated;
-    private boolean activateCursorInteraction = false;
     private  ViewPager viewPager;
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout tabLayout;
@@ -76,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         yMax = (float) size.y - calculateActionBarHeight() * 2;
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         setupViewPager();
+        setupCursor();
     }
 
     private void setupCursor() {
@@ -112,18 +114,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public boolean onTouchEvent(final MotionEvent event)
-    {
-        if(event.getPointerCount() > 2) {
-            activateCursorInteraction = true;
-        }
-        if(activateCursorInteraction){
-            setupCursor();
-        }
-        return true;
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_FASTEST);
@@ -140,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_DOWN:
                 vibrate();
-               if(activateCursorInteraction){
                 int position = viewPager.getCurrentItem();
                 Fragment fragment =  viewPagerAdapter.getRegisteredFragment(position);
                 boolean found = treeSearching(tabLayout, fragment, xPos, yPos);
@@ -149,11 +138,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                          searchInListView(fragment1, xPos, yPos);
                     }
                 }
-
-                    }
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
-                Log.e("main","keyUp");
+                if(isReleased) {
+                    xPosOnVolumeUpClicked = xPos;
+                    isReleased = false;
+                }
                 break;
         }
         return true;
@@ -161,15 +151,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        switch (keyCode){
-            case KeyEvent.KEYCODE_VOLUME_DOWN:
-
-                break;
-            case KeyEvent.KEYCODE_VOLUME_UP:
-                Log.e("main","keyUp");
-                break;
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            isReleased = true;
+            Log.e("main", "keyUp");
+            float scrolling = xPos - xPosOnVolumeUpClicked ;
+            if( scrolling > 80){
+                scrollRight();
+            }else if(scrolling < -80){
+                scrollLeft();
+            }
         }
         return true;
+    }
+
+    private void scrollRight() {
+        int currentItem = viewPager.getCurrentItem();
+        viewPager.setCurrentItem(currentItem+1);
+    }
+
+    private void scrollLeft() {
+        int currentItem = viewPager.getCurrentItem();
+        viewPager.setCurrentItem(currentItem-1);
     }
 
     private void vibrate() {
