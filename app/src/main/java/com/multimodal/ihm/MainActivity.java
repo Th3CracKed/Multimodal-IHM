@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     xPosOnVolumeUpClicked = xPos;
                     yPosOnVolumeUpClicked = yPos;
                     isVolumeUpReleased = false;
+                    ballView.showPointer();
                 }
                 break;
         }
@@ -177,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 isVolumeUpReleased = true;
+                ballView.setDefaultCursor();
                 Log.e("main", "keyUp");
                 float scrollingX = xPos - xPosOnVolumeUpClicked ;
                 float scrollingY = yPos - yPosOnVolumeUpClicked;
