@@ -13,6 +13,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
@@ -49,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     private float xPos, yPos;
     private float xPosOnVolumeUpClicked, yPosOnVolumeUpClicked;
-    private boolean isReleased = true;
+    private boolean isVolumeUpReleased = true, isVolumeDownReleased = true;
     private int yCalibrate = 100;
     private float xAccel, yAccel;
     private float xMax, yMax;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout tabLayout;
     private FragmentOne fragment1;
+    private BallView ballView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void setupCursor() {
         FrameLayout frameLayout = findViewById(R.id.layout_main);
-        BallView ballView = new BallView(this);
+        ballView = new BallView(this);
         frameLayout.addView(ballView);
     }
 
@@ -147,21 +149,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_DOWN:
-                vibrate();
-                int position = viewPager.getCurrentItem();
-                Fragment fragment =  viewPagerAdapter.getRegisteredFragment(position);
-                boolean found = treeSearching(tabLayout, fragment, xPos, yPos);
-                if(position == 0 && ! found) {
-                    if(fragment1 != null){
-                         searchInListView(fragment1, xPos, yPos);
-                    }
+                    vibrate();
+                    int position = viewPager.getCurrentItem();
+                    Fragment fragment = viewPagerAdapter.getRegisteredFragment(position);
+                    boolean found = treeSearching(tabLayout, fragment, xPos, yPos);
+                    if (position == 0 && !found) {
+                        if (fragment1 != null) {
+                            searchInListView(fragment1, xPos, yPos);
+                        }
+                    ballView.showPointer();
+                        new Handler().postDelayed(() -> ballView.setDefaultCursor(), 200);
                 }
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
-                if(isReleased) {
+                if(isVolumeUpReleased) {
                     xPosOnVolumeUpClicked = xPos;
                     yPosOnVolumeUpClicked = yPos;
-                    isReleased = false;
+                    isVolumeUpReleased = false;
                 }
                 break;
         }
@@ -170,26 +174,28 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
-            isReleased = true;
-            Log.e("main", "keyUp");
-            float scrollingX = xPos - xPosOnVolumeUpClicked ;
-            float scrollingY = yPos - yPosOnVolumeUpClicked;
-            boolean shouldSlide = Math.abs(scrollingX) > Math.abs(scrollingY);
-            if(shouldSlide) {
-                if (scrollingX > 80) {
-                    slideRight();
-                } else if (scrollingX < -80) {
-                    slideLeft();
+        switch (keyCode){
+            case KeyEvent.KEYCODE_VOLUME_UP:
+                isVolumeUpReleased = true;
+                Log.e("main", "keyUp");
+                float scrollingX = xPos - xPosOnVolumeUpClicked ;
+                float scrollingY = yPos - yPosOnVolumeUpClicked;
+                boolean shouldSlide = Math.abs(scrollingX) > Math.abs(scrollingY);
+                if(shouldSlide) {
+                    if (scrollingX > 80) {
+                        slideRight();
+                    } else if (scrollingX < -80) {
+                        slideLeft();
+                    }
+                }else{
+                    int nbOfItemsToScroll = Math.abs((int)(scrollingY / 100)) + 1;
+                    if (scrollingY > 80) {
+                        scrollDown(nbOfItemsToScroll);
+                    } else if (scrollingY < -80) {
+                        scrollUp(nbOfItemsToScroll);
+                    }
                 }
-            }else{
-                int nbOfItemsToScroll = Math.abs((int)(scrollingY / 100)) + 1;
-                if (scrollingY > 80) {
-                    scrollDown(nbOfItemsToScroll);
-                } else if (scrollingY < -80) {
-                    scrollUp(nbOfItemsToScroll);
-                }
-            }
+            break;
         }
         return true;
     }
@@ -400,12 +406,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private class BallView extends View {
         private Bitmap ball;
+        private int dstWidth = 100;
+        private int dstHeight = 100;
 
         public BallView(Context context) {
             super(context);
+            setDefaultCursor();
+        }
+
+        public void showPointer(){
+            Bitmap ballSrc = BitmapFactory.decodeResource(getResources(), R.drawable.pointer_clicked);
+            ball = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
+        }
+
+        public void setDefaultCursor() {
             Bitmap ballSrc = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
-            final int dstWidth = 100;
-            final int dstHeight = 100;
             ball = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
         }
 
@@ -414,5 +429,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             canvas.drawBitmap(ball, xPos, yPos, null);
             invalidate();
         }
+
     }
 }
