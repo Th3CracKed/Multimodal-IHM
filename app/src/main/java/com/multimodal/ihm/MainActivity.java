@@ -23,6 +23,9 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -122,6 +125,26 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onStop() {
         sensorManager.unregisterListener(this);
         super.onStop();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.my_options_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.calibrate:
+                isCalibrated = false;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void calibrate() {
+
     }
 
     @Override
@@ -239,6 +262,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             if(viewToClick != null) {
                 simulatesClick(viewToClick);
                 return true;
+            }else{
+                // TODO increment misClick counter (file?)
+                Log.e("Main","");
             }
             return false;
         } catch (ExecutionException | InterruptedException ignored) {
