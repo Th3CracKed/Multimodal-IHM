@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private ViewPagerAdapter viewPagerAdapter;
     private TabLayout tabLayout;
     private FragmentOne fragment1;
-    private BallView ballView;
+    private CursorView cursorView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private void setupCursor() {
         FrameLayout frameLayout = findViewById(R.id.layout_main);
-        ballView = new BallView(this);
-        frameLayout.addView(ballView);
+        cursorView = new CursorView(this);
+        frameLayout.addView(cursorView);
     }
 
     private void setupViewPager() {
@@ -157,16 +157,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         if (fragment1 != null) {
                             searchInListView(fragment1, xPos, yPos);
                         }
-                    ballView.showPointer();
-                        new Handler().postDelayed(() -> ballView.setDefaultCursor(), 200);
-                }
+                    }
+                     cursorView.showPointer();
+                    new Handler().postDelayed(() -> cursorView.setDefaultCursor(), 200);
                 break;
             case KeyEvent.KEYCODE_VOLUME_UP:
                 if(isVolumeUpReleased) {
                     xPosOnVolumeUpClicked = xPos;
                     yPosOnVolumeUpClicked = yPos;
                     isVolumeUpReleased = false;
-                    ballView.showPointer();
+                    cursorView.showPointer();
                 }
                 break;
         }
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch (keyCode){
             case KeyEvent.KEYCODE_VOLUME_UP:
                 isVolumeUpReleased = true;
-                ballView.setDefaultCursor();
+                cursorView.setDefaultCursor();
                 Log.e("main", "keyUp");
                 float scrollingX = xPos - xPosOnVolumeUpClicked ;
                 float scrollingY = yPos - yPosOnVolumeUpClicked;
@@ -406,29 +406,29 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return 0;
     }
 
-    private class BallView extends View {
-        private Bitmap ball;
+    private class CursorView extends View {
+        private Bitmap cursor;
         private int dstWidth = 100;
         private int dstHeight = 100;
 
-        public BallView(Context context) {
+        public CursorView(Context context) {
             super(context);
             setDefaultCursor();
         }
 
         public void showPointer(){
             Bitmap ballSrc = BitmapFactory.decodeResource(getResources(), R.drawable.pointer_clicked);
-            ball = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
+            cursor = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
         }
 
         public void setDefaultCursor() {
             Bitmap ballSrc = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
-            ball = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
+            cursor = Bitmap.createScaledBitmap(ballSrc, dstWidth, dstHeight, true);
         }
 
         @Override
         protected void onDraw(Canvas canvas) {
-            canvas.drawBitmap(ball, xPos, yPos, null);
+            canvas.drawBitmap(cursor, xPos, yPos, null);
             invalidate();
         }
 
